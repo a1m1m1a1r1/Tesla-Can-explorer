@@ -68,7 +68,12 @@
       </div>
     </header>
 
-    <main class="layout">
+    <nav class="view-tabs" role="tablist">
+      <button type="button" class="view-tab active" data-view="frames" role="tab">Frames</button>
+      <button type="button" class="view-tab" data-view="dbc" role="tab">DBC Bit Layout</button>
+    </nav>
+
+    <main class="layout" id="frames-view">
       <aside class="panel panel-left">
         <div class="panel-head">
           <h2>Frames</h2>
@@ -168,6 +173,48 @@
       </section>
     </main>
 
+    <main class="layout layout-dbc" id="dbc-view" hidden>
+      <aside class="panel panel-left">
+        <div class="panel-head">
+          <h2>DBC Messages</h2>
+          <p id="dbc-results">Open this tab to load the DBC files.</p>
+        </div>
+        <div class="controls">
+          <label class="field">
+            <span>DBC File</span>
+            <select id="dbc-file">
+              <option value="">All files</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>ID or Name</span>
+            <input
+              id="dbc-search"
+              type="search"
+              inputmode="search"
+              enterkeyhint="go"
+              placeholder="334, 0x334, 820, powertrain, motorOnMode"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+            />
+          </label>
+        </div>
+        <div class="frame-list" id="dbc-list"></div>
+      </aside>
+
+      <section class="panel panel-right">
+        <div class="panel-head">
+          <button type="button" id="dbc-back" class="mobile-back" aria-label="Back to messages">&#8249; Messages</button>
+          <h2 id="dbc-title">Select a message</h2>
+          <p id="dbc-subtitle">Type an ID such as 334 to see its bit layout.</p>
+        </div>
+        <div id="dbc-detail">
+          <div class="empty-state">The byte/bit layout will appear here.</div>
+        </div>
+      </section>
+    </main>
+
     <footer class="site-footer">
       <div class="footer-line">
         <span class="footer-chip">
@@ -223,5 +270,6 @@
     </template>
 
     <script src="./app.js"></script>
+    <script src="./dbc.js"></script>
   </body>
 </html>

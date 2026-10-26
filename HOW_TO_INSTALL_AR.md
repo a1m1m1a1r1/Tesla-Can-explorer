@@ -7,7 +7,7 @@
 3. اسحب هذا المجلد كاملاً (بعد فك الضغط) وأفلته في الصفحة
 4. ستحصل على رابط مثل https://xxxx.netlify.app
 
-**أو GitHub Pages:** أنشئ مستودعاً، ارفع الملفات، ثم Settings ← Pages ← Branch: main.
+**أو GitHub Pages:** أنشئ مستودعاً عاماً، ارفع الملفات على دفعتين (الملفات الرئيسية مع icons، ثم مجلد data)، ثم Settings ← Pages ← Branch: main.
 
 ## 2) ثبّته على الآيفون
 1. افتح الرابط في **Safari** (وليس Chrome)

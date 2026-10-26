@@ -3,19 +3,23 @@
 const DATA_SOURCES = {
   mcu2: {
     label: "Model 3 MCU2 (Intel)",
-    url: "./data/can_frames_decoded_all_values_mcu2.json",
+    url: "./data/can_frames_decoded_all_values_mcu2",
+    parts: 5,
   },
   mcu3: {
     label: "Model 3 MCU3 (AMD)",
-    url: "./data/can_frames_decoded_all_values_mcu3.json",
+    url: "./data/can_frames_decoded_all_values_mcu3",
+    parts: 5,
   },
   modelsx_amd: {
     label: "Model S/X MCU3 (AMD)",
-    url: "./data/can_frames_decoded_all_values_modelsx_amd.json",
+    url: "./data/can_frames_decoded_all_values_modelsx_amd",
+    parts: 5,
   },
   modelsx_intel: {
     label: "Model S/X MCU2 (Intel)",
-    url: "./data/can_frames_decoded_all_values_modelsx_intel.json",
+    url: "./data/can_frames_decoded_all_values_modelsx_intel",
+    parts: 6,
   },
 };
 const DEFAULT_SOURCE_KEY = "mcu2";
@@ -93,6 +97,7 @@ function getSelectionFromQuery() {
     sourceKey,
     sourceLabel: source.label,
     dataUrl: source.url,
+    dataParts: source.parts || 0,
     isDataOverride: false,
   };
 }
@@ -151,12 +156,39 @@ function getModuleName(frameName) {
 async function loadPayload() {
   const selection = state.dataSelection || getSelectionFromQuery();
   const url = selection.dataUrl;
-  setLoading(`Loading ${url}`);
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to load ${url}: HTTP ${response.status}`);
+  if (!selection.dataParts) {
+    setLoading(`Loading ${url}`);
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to load ${url}: HTTP ${response.status}`);
+    }
+    return response.json();
   }
-  return response.json();
+  // Data is split into small parts (GitHub web upload limit); fetch and join them.
+  const total = selection.dataParts;
+  let done = 0;
+  setLoading(`Loading data 0/${total}`);
+  const buffers = await Promise.all(
+    Array.from({ length: total }, async (_, i) => {
+      const partUrl = `${url}.part${i + 1}.txt`;
+      const res = await fetch(partUrl);
+      if (!res.ok) {
+        throw new Error(`Failed to load ${partUrl}: HTTP ${res.status}`);
+      }
+      const buf = new Uint8Array(await res.arrayBuffer());
+      done += 1;
+      setLoading(`Loading data ${done}/${total}`);
+      return buf;
+    })
+  );
+  const size = buffers.reduce((n, b) => n + b.length, 0);
+  const joined = new Uint8Array(size);
+  let offset = 0;
+  for (const b of buffers) {
+    joined.set(b, offset);
+    offset += b.length;
+  }
+  return JSON.parse(new TextDecoder("utf-8").decode(joined));
 }
 
 async function indexFrames(frames) {
@@ -436,6 +468,7 @@ function renderFrameDetail() {
     `<span class="chip">Enumerated: <code>${formatNum(frame.__enumeratedSignalCount)}</code></span>`,
     `<span class="chip">Enum Values: <code>${formatNum(frame.__valueCount)}</code></span>`,
     `<span class="chip">VAPI Aliases: <code>${formatNum(frame.__vapiAliasCount)}</code></span>`,
+    `<button type="button" class="chip chip-link" data-dbc-id="${escapeHtml(frame.address_dec)}">Bit layout (DBC) &rsaquo;</button>`,
   ].join("");
 
   const filteredSignals = filterSignals(frame.__signals, state.signalQuery);

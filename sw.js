@@ -1,13 +1,14 @@
 /* Tesla CAN Explorer – offline support.
    App shell: network-first (updates show up when online), cached fallback offline.
    Data JSON: cache-first (each data source is saved the first time it is opened). */
-const VERSION = "v1";
+const VERSION = "v3";
 const SHELL_CACHE = `can-shell-${VERSION}`;
-const DATA_CACHE = "can-data-v1"; // bump only when the data files change
+const DATA_CACHE = "can-data-v2"; // bump only when the data files change
 const SHELL = [
   "./",
   "./index.html",
   "./app.js",
+  "./dbc.js",
   "./styles.css",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
@@ -38,7 +39,7 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  if (url.pathname.includes("/data/") && url.pathname.endsWith(".json")) {
+  if (url.pathname.includes("/data/")) {
     event.respondWith(
       caches.open(DATA_CACHE).then(async (cache) => {
         const hit = await cache.match(req, { ignoreSearch: true });
