@@ -1011,6 +1011,19 @@ button.chip-link {
   background: #ffe1e2;
   font-weight: 700;
 }
+.cf-tag {
+  font-style: normal;
+  font-size: 0.64rem;
+  border-radius: 4px;
+  padding: 0 4px;
+  margin-left: 2px;
+  border: 1px solid currentColor;
+}
+.cf-0 { color: #6fdc8c; }
+.cf-1 { color: #ffd166; }
+.cf-2 { color: #a4acb7; }
+.cf-3 { color: #ff8a8a; }
+
 .dbc-sig-row {
   cursor: pointer;
 }

@@ -8,6 +8,7 @@
 
 (() => {
   const DBC_INDEX_URL = "./data/dbc/index.json";
+  const CONFIDENCE = { 0: "validated", 1: "plausible", 2: "layout-only", 3: "contradicted" };
   const MOBILE = window.matchMedia("(max-width: 800px)");
 
   const $ = (id) => document.getElementById(id);
@@ -89,19 +90,40 @@
     st.loading = (async () => {
       try {
         const index = await (await fetch(DBC_INDEX_URL)).json();
+        let done = 0;
+        ui.results.textContent = `Loading DBC files 0/${index.length}...`;
         const files = await Promise.all(
           index.map(async (f) => {
             const res = await fetch(f.url);
             if (!res.ok) throw new Error(`${f.url}: HTTP ${res.status}`);
             const data = await res.json();
-            return { key: f.key, label: f.label, file: f.file, messages: data.messages };
+            done += 1;
+            ui.results.textContent = `Loading DBC files ${done}/${index.length}...`;
+            return {
+              key: f.key,
+              label: f.label,
+              group: f.group || "",
+              file: f.file,
+              eth: /ETH/.test(f.key),
+              nodes: data.nodes || {},
+              messages: data.messages,
+            };
           })
         );
         st.files = files;
         buildGroups();
+        const groups = [...new Set(files.map((f) => f.group))];
         ui.file.innerHTML =
           '<option value="">All files</option>' +
-          files.map((f) => `<option value="${esc(f.key)}">${esc(f.label)} (${f.messages.length})</option>`).join("");
+          groups
+            .map(
+              (gname) =>
+                `<optgroup label="${esc(gname)}">${files
+                  .filter((f) => f.group === gname)
+                  .map((f) => `<option value="${esc(f.key)}">${esc(f.label)} (${f.messages.length})</option>`)
+                  .join("")}</optgroup>`
+            )
+            .join("");
         st.loaded = true;
         const params = new URLSearchParams(location.search);
         const wantId = params.get("id");
@@ -302,7 +324,8 @@
     const dlc = Math.max(1, msg.dlc || 8);
 
     ui.title.textContent = `${msg.n} (${hex(msg.id, 3)})`;
-    ui.subtitle.textContent = `ID ${msg.id} dec · ${dlc} bytes · ${file.file}`;
+    ui.subtitle.textContent =
+      `ID ${msg.id} dec · ${dlc} bytes · ${file.file}` + (file.eth ? " · Ethernet-side ID, not the CAN ID" : "");
 
     if (!st.selectedSignal || !sigs.some((s) => s.n === st.selectedSignal)) {
       const withValues = sigs.find((s) => s.v && s.v.length && !s.M);
@@ -343,7 +366,10 @@
       `<span class="chip">ID: <code>${hex(msg.id, 3)}</code> / <code>${msg.id}</code>${msg.x ? " ext" : ""}</span>`,
       `<span class="chip">DLC: <code>${msg.dlc}</code></span>`,
       `<span class="chip">Signals: <code>${msg.s.length}</code></span>`,
-      msg.tx ? `<span class="chip">TX: <code>${esc(msg.tx)}</code></span>` : "",
+      msg.tx
+        ? `<span class="chip">TX: <code>${esc(msg.tx)}</code>${file.nodes[msg.tx] ? ` · ${esc(file.nodes[msg.tx])}` : ""}</span>`
+        : "",
+      msg.fd ? `<span class="chip">CAN FD</span>` : "",
       msg.cy ? `<span class="chip">Cycle: <code>${msg.cy} ms</code></span>` : "",
       `<span class="chip">File: <code>${esc(file.file)}</code></span>`,
     ].join("");
@@ -407,6 +433,8 @@
         ["Unit", sel.u || "-"],
         sel.rx ? ["Receivers", sel.rx] : null,
         sel.M ? ["Multiplexing", "Multiplexor"] : sel.m !== undefined ? ["Multiplexing", `m${sel.m}`] : null,
+        sel.cf !== undefined ? ["Confidence", CONFIDENCE[sel.cf] || sel.cf] : null,
+        sel.sna !== undefined ? ["SNA (not available)", `raw ${sel.sna}`] : null,
         sel.c ? ["Comment", sel.c] : null,
         dec ? ["Decoded", `${dec.label ? dec.label + " · " : ""}${formatPhys(dec.phys)}${sel.u ? " " + sel.u : ""} (raw ${dec.raw})`] : null,
       ].filter(Boolean);
@@ -441,7 +469,7 @@
       .map((s) => {
         const d = bytes ? decode(s, bytes) : null;
         return `<tr class="dbc-sig-row${s.n === st.selectedSignal ? " active" : ""}" data-sig="${esc(s.n)}">
-          <td><span class="swatch" style="background:${colorOf.get(s.n)}"></span>${esc(s.n)}${s.M ? ' <em class="mux-tag">M</em>' : s.m !== undefined ? ` <em class="mux-tag">m${s.m}</em>` : ""}</td>
+          <td><span class="swatch" style="background:${colorOf.get(s.n)}"></span>${esc(s.n)}${s.M ? ' <em class="mux-tag">M</em>' : s.m !== undefined ? ` <em class="mux-tag">m${s.m}</em>` : ""}${s.cf !== undefined ? ` <em class="cf-tag cf-${esc(s.cf)}" title="Confidence">${esc(CONFIDENCE[s.cf] || s.cf)}</em>` : ""}</td>
           <td>${s.b}</td><td>${s.l}</td><td>${s.o === 1 ? "Intel" : "Motorola"}</td>
           <td>${esc(s.f)}</td><td>${esc(s.of)}</td><td>${esc(s.u || "")}</td>
           <td>${s.v ? s.v.length : ""}</td>
