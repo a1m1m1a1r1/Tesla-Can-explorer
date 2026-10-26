@@ -562,12 +562,21 @@ function renderValuesTable(values) {
   if (!values.length) {
     return '<div class="empty-state">No discrete values decoded for this signal.</div>';
   }
+  const maxVal = values.reduce((m, v) => Math.max(m, Math.abs(Number(v.value_dec)) || 0), 1);
+  const width = Math.max(1, Math.floor(Math.log2(maxVal)) + 1);
+  const toBits = (dec) => {
+    const n = Number(dec);
+    if (!Number.isFinite(n)) return String(dec ?? "");
+    let b = Math.abs(Math.trunc(n)).toString(2).padStart(width, "0");
+    if (b.length > 8) b = b.replace(/\B(?=(\d{4})+$)/g, " ");
+    return (n < 0 ? "-" : "") + b;
+  };
   const rowHtml = values
     .map(
       (value) => `
         <tr>
           <td class="mono">${escapeHtml(value.value_dec)}</td>
-          <td class="mono">${escapeHtml(value.value_hex)}</td>
+          <td class="mono">${escapeHtml(toBits(value.value_dec))}</td>
           <td>${escapeHtml(value.label)}</td>
         </tr>
       `
@@ -580,7 +589,7 @@ function renderValuesTable(values) {
         <thead>
           <tr>
             <th>Value (Dec)</th>
-            <th>Value (Hex)</th>
+            <th>Value (Bin)</th>
             <th>Label</th>
           </tr>
         </thead>

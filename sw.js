@@ -1,7 +1,7 @@
 /* Tesla CAN Explorer – offline support.
    App shell: network-first (updates show up when online), cached fallback offline.
    Data JSON: cache-first (each data source is saved the first time it is opened). */
-const VERSION = "v4";
+const VERSION = "v5";
 const SHELL_CACHE = `can-shell-${VERSION}`;
 const DATA_CACHE = "can-data-v3"; // bump only when the data files change
 const SHELL = [

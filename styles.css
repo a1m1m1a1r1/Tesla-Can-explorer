@@ -1007,6 +1007,10 @@ button.chip-link {
   width: 28px;
   color: #666;
 }
+.dbc-vt code.bits {
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
 .dbc-vt tr.hit td {
   background: #ffe1e2;
   font-weight: 700;

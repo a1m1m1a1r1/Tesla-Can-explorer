@@ -50,6 +50,16 @@
       .replaceAll("'", "&#39;");
 
   const hex = (n, pad = 0) => "0x" + Number(n).toString(16).toUpperCase().padStart(pad, "0");
+  // Binary with the signal's bit length; groups of 4 for long values.
+  function toBits(v, width) {
+    const w = Math.max(1, Number(width) || 1);
+    let n = BigInt(Math.trunc(Number(v)));
+    if (n < 0n) n = (1n << BigInt(w)) + n; // two's complement
+    let b = n.toString(2);
+    if (b.length < w) b = b.padStart(w, "0");
+    if (b.length > 8) b = b.replace(/\B(?=(\d{4})+$)/g, " ");
+    return b;
+  }
   const groupKey = (id, x) => `${x ? "x" : "s"}${id}`;
 
   // ---------- view switching ----------
@@ -439,7 +449,7 @@
         dec ? ["Decoded", `${dec.label ? dec.label + " · " : ""}${formatPhys(dec.phys)}${sel.u ? " " + sel.u : ""} (raw ${dec.raw})`] : null,
       ].filter(Boolean);
       const vals = sel.v || [];
-      const digits = Math.max(2, Math.ceil(sel.l / 4));
+
       selHtml = `<div class="dbc-sel">
         <h3><span class="swatch" style="background:${colorOf.get(sel.n)}"></span>${esc(sel.n)}</h3>
         <dl class="dbc-props">${props.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
@@ -447,11 +457,11 @@
         ${
           vals.length
             ? `<div class="dbc-vt-wrap"><table class="values-table dbc-vt">
-            <thead><tr><th>#</th><th>Value</th><th>Dec</th><th>Description</th></tr></thead>
+            <thead><tr><th>#</th><th>Value (Bin)</th><th>Dec</th><th>Description</th></tr></thead>
             <tbody>${vals
               .map(
                 ([v, label], i) =>
-                  `<tr class="${dec && Number(v) === dec.raw ? "hit" : ""}"><td>${i + 1}</td><td><code>${typeof v === "number" ? hex(v, digits) : esc(v)}</code></td><td><code>${esc(v)}</code></td><td>${esc(label)}</td></tr>`
+                  `<tr class="${dec && Number(v) === dec.raw ? "hit" : ""}"><td>${i + 1}</td><td><code class="bits">${typeof v === "number" ? esc(toBits(v, sel.l)) : esc(v)}</code></td><td><code>${esc(v)}</code></td><td>${esc(label)}</td></tr>`
               )
               .join("")}</tbody></table></div>`
             : '<div class="empty-state">No value table for this signal.</div>'
