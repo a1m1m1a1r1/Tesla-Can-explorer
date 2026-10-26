@@ -2,25 +2,97 @@
  {
   "key": "Model3CAN",
   "label": "Model3CAN.dbc",
+  "group": "Your files",
   "file": "Model3CAN.dbc",
-  "url": "./data/dbc/dbc_Model3CAN.json"
+  "url": "./data/dbc/dbc_Model3CAN.json",
+  "count": 159
  },
  {
   "key": "VEH",
   "label": "Model3 VEH",
+  "group": "Your files",
   "file": "Model3_VEH.dbc",
-  "url": "./data/dbc/dbc_VEH.json"
+  "url": "./data/dbc/dbc_VEH.json",
+  "count": 687
  },
  {
   "key": "CH",
   "label": "Model3 CH",
+  "group": "Your files",
   "file": "Model3_CH.dbc",
-  "url": "./data/dbc/dbc_CH.json"
+  "url": "./data/dbc/dbc_CH.json",
+  "count": 303
  },
  {
   "key": "PARTY",
   "label": "Model3 PARTY",
+  "group": "Your files",
   "file": "Model3_PARTY.dbc",
-  "url": "./data/dbc/dbc_PARTY.json"
+  "url": "./data/dbc/dbc_PARTY.json",
+  "count": 131
+ },
+ {
+  "key": "Y26_VEH",
+  "label": "Model Y 2026.26.6.5 VEH",
+  "group": "Model Y 2026.26.6.5 (tesla-can-signal-db)",
+  "file": "ModelY/2026.26.6.5/VEH.dbc",
+  "url": "./data/dbc/dbc_Y26_VEH.json",
+  "count": 413
+ },
+ {
+  "key": "Y26_CH",
+  "label": "Model Y 2026.26.6.5 CH",
+  "group": "Model Y 2026.26.6.5 (tesla-can-signal-db)",
+  "file": "ModelY/2026.26.6.5/CH.dbc",
+  "url": "./data/dbc/dbc_Y26_CH.json",
+  "count": 153
+ },
+ {
+  "key": "Y26_PARTY",
+  "label": "Model Y 2026.26.6.5 PARTY",
+  "group": "Model Y 2026.26.6.5 (tesla-can-signal-db)",
+  "file": "ModelY/2026.26.6.5/PARTY.dbc",
+  "url": "./data/dbc/dbc_Y26_PARTY.json",
+  "count": 53
+ },
+ {
+  "key": "Y26_ETH",
+  "label": "Model Y 2026.26.6.5 ETH (Ethernet IDs)",
+  "group": "Model Y 2026.26.6.5 (tesla-can-signal-db)",
+  "file": "ModelY/2026.26.6.5/ETH.dbc",
+  "url": "./data/dbc/dbc_Y26_ETH.json",
+  "count": 75
+ },
+ {
+  "key": "Y25_VEH",
+  "label": "Model Y 2025.20.8 VEH",
+  "group": "Model Y 2025.20.8 (tesla-can-signal-db)",
+  "file": "ModelY/2025.20.8/VEH.dbc",
+  "url": "./data/dbc/dbc_Y25_VEH.json",
+  "count": 149
+ },
+ {
+  "key": "Y25_CH",
+  "label": "Model Y 2025.20.8 CH",
+  "group": "Model Y 2025.20.8 (tesla-can-signal-db)",
+  "file": "ModelY/2025.20.8/CH.dbc",
+  "url": "./data/dbc/dbc_Y25_CH.json",
+  "count": 90
+ },
+ {
+  "key": "Y25_PARTY",
+  "label": "Model Y 2025.20.8 PARTY",
+  "group": "Model Y 2025.20.8 (tesla-can-signal-db)",
+  "file": "ModelY/2025.20.8/PARTY.dbc",
+  "url": "./data/dbc/dbc_Y25_PARTY.json",
+  "count": 23
+ },
+ {
+  "key": "Y25_ETH",
+  "label": "Model Y 2025.20.8 ETH (Ethernet IDs)",
+  "group": "Model Y 2025.20.8 (tesla-can-signal-db)",
+  "file": "ModelY/2025.20.8/ETH.dbc",
+  "url": "./data/dbc/dbc_Y25_ETH.json",
+  "count": 357
  }
 ]
